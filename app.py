@@ -24,16 +24,35 @@ st.set_page_config(
 # CONFIG
 # ---------------------------
 PDF_PATH = "Pharmacy Dictionary.pdf"
+GROQ_MODEL = "llama-3.3-70b-versatile"
 
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 TOP_K = 5
+
+
+def get_groq_api_key():
+    """Read the key from Streamlit Secrets or the environment; never hard-code it."""
+    try:
+        api_key = st.secrets.get("GROQ_API_KEY")
+    except Exception:
+        api_key = None
+
+    return api_key or os.getenv("GROQ_API_KEY")
+
 
 # ---------------------------
 # LOAD VECTOR DATABASE
 # ---------------------------
 @st.cache_resource
 def initialize_rag():
+
+    api_key = get_groq_api_key()
+    if not api_key:
+        raise RuntimeError(
+            "GROQ_API_KEY is missing. Add it in Streamlit Cloud under "
+            "Manage app > Settings > Secrets as GROQ_API_KEY = \"your-key\"."
+        )
 
     doc = fitz.open(PDF_PATH)
 
@@ -72,8 +91,8 @@ def initialize_rag():
     )
 
     llm = ChatGroq(
-        model_name="llama-3.3-70b-versatile",
-        api_key=os.getenv("GROQ_API_KEY")
+        model_name=GROQ_MODEL,
+        api_key=api_key
     )
 
     prompt = ChatPromptTemplate.from_template(

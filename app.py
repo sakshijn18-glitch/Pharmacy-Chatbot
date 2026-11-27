@@ -71,10 +71,10 @@ def initialize_rag():
         search_kwargs={"k": TOP_K}
     )
 
-   llm = ChatGroq(
-    model_name="llama3-70b-8192",
-    api_key=os.getenv("GROQ_API_KEY")
-)
+    llm = ChatGroq(
+        model_name="llama3-70b-8192",
+        api_key=os.getenv("GROQ_API_KEY")
+    )
 
     prompt = ChatPromptTemplate.from_template(
         """

@@ -1,4 +1,5 @@
 import os
+print("GROQ_API_KEY =", os.getenv("GROQ_API_KEY"))
 import streamlit as st
 import fitz  # PyMuPDF
 

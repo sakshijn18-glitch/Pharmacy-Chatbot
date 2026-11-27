@@ -73,7 +73,7 @@ def initialize_rag():
 
     llm = ChatGroq(
         api_key=st.secrets["GROQ_API_KEY"],
-        model="llama-3.3-70b-versatile"
+        model="llama3-70b-8192"
     )
 
     prompt = ChatPromptTemplate.from_template(

@@ -24,21 +24,26 @@ st.set_page_config(
 # CONFIG
 # ---------------------------
 PDF_PATH = "Pharmacy Dictionary.pdf"
-GROQ_MODEL = "llama-3.3-70b-versatile"
+DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b"
 
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 TOP_K = 5
 
 
-def get_groq_api_key():
-    """Read the key from Streamlit Secrets or the environment; never hard-code it."""
+def get_groq_settings():
+    """Read Groq credentials/settings from Streamlit Secrets or environment."""
     try:
         api_key = st.secrets.get("GROQ_API_KEY")
+        model_name = st.secrets.get("GROQ_MODEL")
     except Exception:
         api_key = None
+        model_name = None
 
-    return api_key or os.getenv("GROQ_API_KEY")
+    return (
+        api_key or os.getenv("GROQ_API_KEY"),
+        model_name or os.getenv("GROQ_MODEL") or DEFAULT_GROQ_MODEL,
+    )
 
 
 # ---------------------------
@@ -47,7 +52,7 @@ def get_groq_api_key():
 @st.cache_resource
 def initialize_rag():
 
-    api_key = get_groq_api_key()
+    api_key, model_name = get_groq_settings()
     if not api_key:
         raise RuntimeError(
             "GROQ_API_KEY is missing. Add it in Streamlit Cloud under "
@@ -91,7 +96,7 @@ def initialize_rag():
     )
 
     llm = ChatGroq(
-        model_name=GROQ_MODEL,
+        model_name=model_name,
         api_key=api_key
     )
 

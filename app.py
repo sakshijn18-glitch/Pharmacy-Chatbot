@@ -1,5 +1,4 @@
 import os
-print("GROQ_API_KEY =", os.getenv("GROQ_API_KEY"))
 import streamlit as st
 import fitz  # PyMuPDF
 
@@ -72,10 +71,16 @@ def initialize_rag():
         search_kwargs={"k": TOP_K}
     )
 
-    llm = ChatGroq(
-        api_key=st.secrets["GROQ_API_KEY"],
-        model="llama3-70b-8192"
-    )
+ groq_key = os.getenv("GROQ_API_KEY")
+
+if not groq_key:
+    st.error("GROQ_API_KEY not found.")
+    st.stop()
+
+llm = ChatGroq(
+    api_key=groq_key,
+    model_name="llama3-70b-8192"
+)
 
     prompt = ChatPromptTemplate.from_template(
         """

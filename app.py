@@ -71,15 +71,9 @@ def initialize_rag():
         search_kwargs={"k": TOP_K}
     )
 
- groq_key = os.getenv("GROQ_API_KEY")
-
-if not groq_key:
-    st.error("GROQ_API_KEY not found.")
-    st.stop()
-
-llm = ChatGroq(
-    api_key=groq_key,
-    model_name="llama3-70b-8192"
+   llm = ChatGroq(
+    model_name="llama3-70b-8192",
+    api_key=os.getenv("GROQ_API_KEY")
 )
 
     prompt = ChatPromptTemplate.from_template(
